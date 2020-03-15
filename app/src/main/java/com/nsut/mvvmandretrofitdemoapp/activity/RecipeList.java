@@ -16,11 +16,15 @@ import com.nsut.mvvmandretrofitdemoapp.viewmodels.RecipeListViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RecipeList extends BaseActivity {
 
     private ListView listView;
     private ArrayAdapter<String> arrayAdapter;
+    private RecipeListViewModel recipeListViewModel;
+    private LiveData<List<Recipe>> recipeList;
+    private String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,23 +33,43 @@ public class RecipeList extends BaseActivity {
 
         listView = findViewById(R.id.listView);
 
-        RecipeListViewModel recipeListViewModel = ViewModelProvider.
-                AndroidViewModelFactory.getInstance(getApplication()).
-                create(RecipeListViewModel.class);
-
-        String type = getIntent().getStringExtra("type");
-        LiveData<List<Recipe>> recipeList = recipeListViewModel.getRecipeList(type);
-
-        recipeList.observe(this, recipes -> {
-            ArrayList<String> arrayList = new ArrayList<>(recipes.size());
-            for(Recipe recipe : recipes){
-                arrayList.add(recipe.getTitle());
-            }
-            arrayAdapter.addAll(arrayList);
-            arrayAdapter.notifyDataSetChanged();
-        });
-
         arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         listView.setAdapter(arrayAdapter);
+        type = getIntent().getStringExtra("type");
+
+        recipeListViewModel = ViewModelProvider.AndroidViewModelFactory
+                .getInstance(getApplication())
+                .create(RecipeListViewModel.class);
+
+        subscribeObserver();
+        reinitializeRecipeList();
+        getRecipe();
     }
+
+    private void getRecipe(){
+        System.out.println("GET RECIPE 1");
+        recipeListViewModel.searchRecipe(type);
+    }
+
+    private void subscribeObserver(){
+        recipeList = recipeListViewModel.getRecipeList();
+        recipeList.observe(this, this::addDataToListView);
+    }
+
+    private void addDataToListView(List<Recipe> recipes){
+        System.out.println(recipes);
+        ArrayList<String> arrayList = new ArrayList<>(recipes.size());
+        for(Recipe recipe : recipes){
+            arrayList.add(recipe.getTitle());
+        }
+        arrayAdapter.addAll(arrayList);
+        arrayAdapter.notifyDataSetChanged();
+    }
+
+    private void reinitializeRecipeList(){
+        if(recipeList !=null && recipeList.getValue() !=null ) {
+            recipeList.getValue().clear();
+        }
+    }
+
 }

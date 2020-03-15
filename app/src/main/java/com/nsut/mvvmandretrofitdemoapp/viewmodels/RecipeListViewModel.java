@@ -6,7 +6,6 @@ import com.nsut.mvvmandretrofitdemoapp.repository.RecipeListRepository;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class RecipeListViewModel extends ViewModel {
@@ -17,8 +16,13 @@ public class RecipeListViewModel extends ViewModel {
         recipeListRepository = RecipeListRepository.getInstance();
     }
 
-    public LiveData<List<Recipe>> getRecipeList(String type){
-        return recipeListRepository.getRecipe(type);
+    public LiveData<List<Recipe>> getRecipeList(){
+        return recipeListRepository.getRecipe();
+    }
+
+    public void searchRecipe(String type){
+        System.out.println("GET RECIPE 2");
+        recipeListRepository.searchRecipe(type);
     }
 
 }

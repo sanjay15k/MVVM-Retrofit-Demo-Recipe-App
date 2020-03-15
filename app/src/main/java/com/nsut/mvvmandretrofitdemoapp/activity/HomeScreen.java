@@ -7,6 +7,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.nsut.mvvmandretrofitdemoapp.AsyncTaskTest;
 import com.nsut.mvvmandretrofitdemoapp.BaseActivity;
 import com.nsut.mvvmandretrofitdemoapp.R;
 

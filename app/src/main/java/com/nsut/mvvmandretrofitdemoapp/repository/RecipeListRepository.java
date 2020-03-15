@@ -1,6 +1,7 @@
 package com.nsut.mvvmandretrofitdemoapp.repository;
 
 import com.nsut.mvvmandretrofitdemoapp.models.Recipe;
+import com.nsut.mvvmandretrofitdemoapp.requests.RecipeListClient;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 public class RecipeListRepository {
 
     private static RecipeListRepository instance;
-    private MutableLiveData<List<Recipe>> recipeList;
+    private RecipeListClient recipeListClient;
 
     public static RecipeListRepository getInstance(){
         if(instance == null){
@@ -20,11 +21,16 @@ public class RecipeListRepository {
     }
 
     private RecipeListRepository(){
-        recipeList = new MutableLiveData<>();
+        recipeListClient = RecipeListClient.getInstance();
     }
 
-    public LiveData<List<Recipe>> getRecipe(String type){
-        return recipeList;
+    public LiveData<List<Recipe>> getRecipe(){
+        return recipeListClient.getRecipe();
+    }
+
+    public void searchRecipe(String type){
+        System.out.println("GET RECIPE 3");
+        recipeListClient.searchRecipe(type);
     }
 
 }
