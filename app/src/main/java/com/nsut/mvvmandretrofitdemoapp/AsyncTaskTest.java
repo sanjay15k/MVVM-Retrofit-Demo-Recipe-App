@@ -4,8 +4,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.nsut.mvvmandretrofitdemoapp.models.Recipe;
+import com.nsut.mvvmandretrofitdemoapp.models.SearchRecipe;
 import com.nsut.mvvmandretrofitdemoapp.requests.ServiceGenerator;
 import com.nsut.mvvmandretrofitdemoapp.requests.response.RecipeResponse;
+import com.nsut.mvvmandretrofitdemoapp.requests.response.SearchRecipeResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,14 +21,14 @@ public class AsyncTaskTest extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        Call recipeListCall = ServiceGenerator.getRecipeApi().getRecipeList("5", "main course");
+        Call recipeListCall = ServiceGenerator.getRecipeApi().getSearchRecipeList("2", "dosa");
         try {
             Response response = recipeListCall.execute();
             System.out.println("DONE 3");
             if(response.code() == 200){
-                RecipeResponse recipeResponse = (RecipeResponse) response.body();
-                if(recipeResponse != null) {
-                    List<Recipe> recipeListResponse = recipeResponse.getRecipeList();
+                SearchRecipeResponse searchRecipeResponse = (SearchRecipeResponse) response.body();
+                if(searchRecipeResponse != null) {
+                    List<SearchRecipe> recipeListResponse = searchRecipeResponse.getSearchRecipeList();
                     System.out.println(recipeListResponse);
                 }
             }

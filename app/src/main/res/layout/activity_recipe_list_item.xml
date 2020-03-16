@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
+    android:layout_marginTop="10dp"
+    app:cardElevation="1dp"
+    android:layout_marginBottom="25dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="10dp">
+
+        <ImageView
+            android:id="@+id/recipePhotoImageView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:padding="1dp"
+            android:src="@drawable/default_recipe_image"/>
+
+        <TextView
+            android:id="@+id/recipeTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:letterSpacing="0.05"
+            android:textAllCaps="true"
+            android:fontFamily="@font/lato_bold"
+            android:textColor="@color/colorPrimaryDark"
+            android:text="Chocolate Nutella Walnut Cake"
+            android:padding="10dp"/>
+
+        <TextView
+            android:id="@+id/recipeSummaryTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textSize="13sp"
+            android:textColor="#9E9E9E"
+            android:maxLines="4"
+            android:ellipsize="end"
+            android:lineSpacingExtra="2dp"
+            android:text="Chocolate Nutella Walnut Cake is a lacto ovo vegetarian recipe with 8 servings. One portion of this dish contains approximately"
+            android:paddingBottom="5dp"/>
+
+
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

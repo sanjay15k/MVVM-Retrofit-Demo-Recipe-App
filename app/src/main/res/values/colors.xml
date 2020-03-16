@@ -3,4 +3,5 @@
     <color name="colorPrimary">#FF9100</color>
     <color name="colorPrimaryDark">#FB8C00</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="searchViewTextColor">#000000</color>
 </resources>

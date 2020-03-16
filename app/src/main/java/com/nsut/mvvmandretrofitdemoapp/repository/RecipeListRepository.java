@@ -1,12 +1,11 @@
 package com.nsut.mvvmandretrofitdemoapp.repository;
 
 import com.nsut.mvvmandretrofitdemoapp.models.Recipe;
-import com.nsut.mvvmandretrofitdemoapp.requests.RecipeListClient;
+import com.nsut.mvvmandretrofitdemoapp.requests.NetworkClient.RecipeListClient;
 
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 public class RecipeListRepository {
 

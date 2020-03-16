@@ -1,10 +1,8 @@
-package com.nsut.mvvmandretrofitdemoapp.requests;
-
-import android.widget.Toast;
+package com.nsut.mvvmandretrofitdemoapp.requests.NetworkClient;
 
 import com.nsut.mvvmandretrofitdemoapp.Executors.AppExecutors;
-import com.nsut.mvvmandretrofitdemoapp.activity.RecipeList;
 import com.nsut.mvvmandretrofitdemoapp.models.Recipe;
+import com.nsut.mvvmandretrofitdemoapp.requests.ServiceGenerator;
 import com.nsut.mvvmandretrofitdemoapp.requests.response.RecipeResponse;
 import com.nsut.mvvmandretrofitdemoapp.utils.Constants;
 
