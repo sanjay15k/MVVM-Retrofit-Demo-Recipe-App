@@ -1,17 +1,13 @@
 package com.nsut.mvvmandretrofitdemoapp.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -22,9 +18,7 @@ import com.nsut.mvvmandretrofitdemoapp.listener.CreateApiCall;
 import com.nsut.mvvmandretrofitdemoapp.models.Recipe;
 import com.nsut.mvvmandretrofitdemoapp.viewmodels.RecipeListViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class RecipeListActivity extends BaseActivity implements CreateApiCall {
 

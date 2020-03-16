@@ -1,6 +1,5 @@
 package com.nsut.mvvmandretrofitdemoapp.repository;
 
-
 import com.nsut.mvvmandretrofitdemoapp.models.SearchRecipe;
 import com.nsut.mvvmandretrofitdemoapp.requests.NetworkClient.SearchRecipeApiClient;
 

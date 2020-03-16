@@ -1,19 +1,14 @@
 package com.nsut.mvvmandretrofitdemoapp;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
-import com.nsut.mvvmandretrofitdemoapp.models.Recipe;
 import com.nsut.mvvmandretrofitdemoapp.models.SearchRecipe;
 import com.nsut.mvvmandretrofitdemoapp.requests.ServiceGenerator;
-import com.nsut.mvvmandretrofitdemoapp.requests.response.RecipeResponse;
 import com.nsut.mvvmandretrofitdemoapp.requests.response.SearchRecipeResponse;
 
 import java.io.IOException;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import retrofit2.Call;
 import retrofit2.Response;
 

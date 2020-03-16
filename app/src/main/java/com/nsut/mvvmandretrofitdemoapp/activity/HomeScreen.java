@@ -11,13 +11,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.nsut.mvvmandretrofitdemoapp.BaseActivity;
 import com.nsut.mvvmandretrofitdemoapp.R;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import androidx.appcompat.widget.SearchView;
 
 public class HomeScreen extends BaseActivity {
-
-    private AtomicBoolean isNavigateBack;
 
     private SearchView searchView;
 
@@ -25,11 +21,11 @@ public class HomeScreen extends BaseActivity {
     public void onBackPressed() {
         System.out.println("Called 1");
         String query = searchView.getQuery().toString().trim();
-        if (!isNavigateBack.getAndSet(true) && (searchView.hasFocus() || query.length()>0)) {
+
+        if(searchView.hasFocus() || query.length()>0){
             defaultSearchView();
         }
         else{
-            System.out.println("Called 3");
             super.onBackPressed();
         }
     }
@@ -40,28 +36,21 @@ public class HomeScreen extends BaseActivity {
         hideStatusBar();
         setContentView(R.layout.activity_home_screen);
 
-        isNavigateBack = new AtomicBoolean();
-
         searchView = findViewById(R.id.searchView);
-
-        init();
 
         loadImages();
         initSearchView();
     }
 
-    private void init(){
-        isNavigateBack.set(false);
-    }
-
     private void initSearchView(){
-        defaultSearchView();
         searchView.setIconifiedByDefault(false);
-        searchView.onActionViewExpanded();
+
+//        This was producing the error - popping keyboard on startup, it expands the SearchView and
+//        taking focus automatically that causes the keyboard to open.
+//        searchView.onActionViewExpanded();
+
         searchView.setOnQueryTextListener(new SearchViewListener());
-
         customizeSearchView(searchView);
-
     }
 
     private class SearchViewListener implements SearchView.OnQueryTextListener{
