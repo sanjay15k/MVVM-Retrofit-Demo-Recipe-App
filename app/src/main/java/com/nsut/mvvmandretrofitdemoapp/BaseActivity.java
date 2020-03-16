@@ -3,28 +3,47 @@ package com.nsut.mvvmandretrofitdemoapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+
+import com.bumptech.glide.Glide;
+import com.nsut.mvvmandretrofitdemoapp.listener.CreateApiCall;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private ProgressBar progressBar;
+    private Button retryButton;
+    private ImageView progressBarImageView;
 
     @Override
     public void setContentView(int layoutResID) {
         ConstraintLayout constraintLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.activity_base, null);
         FrameLayout frameLayout = constraintLayout.findViewById(R.id.frameLayout);
-        progressBar = constraintLayout.findViewById(R.id.progressBar);
+        retryButton = constraintLayout.findViewById(R.id.retryButton);
+        progressBarImageView = constraintLayout.findViewById(R.id.progressBarImageView);
         getLayoutInflater().inflate(layoutResID, frameLayout, true);
         super.setContentView(constraintLayout);
+
+        loadProgressGifImageView();
+    }
+
+    public void showRetryButton(boolean isVisible, CreateApiCall retrySendingRequest){
+        if(retrySendingRequest != null) {
+            retryButton.setOnClickListener(v -> retrySendingRequest.sendApiRequest());
+        }
+        retryButton.setVisibility(isVisible?View.VISIBLE:View.GONE);
     }
 
     public void showProgressBar(boolean isVisible){
-        progressBar.setVisibility(isVisible?View.VISIBLE:View.GONE);
+        progressBarImageView.setVisibility(isVisible?View.VISIBLE:View.GONE);
+    }
+
+    private void loadProgressGifImageView(){
+        Glide.with(this).asGif().load(R.drawable.loader).into(progressBarImageView);
     }
 
     // Hiding the status bar

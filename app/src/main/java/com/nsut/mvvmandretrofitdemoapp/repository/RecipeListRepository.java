@@ -27,6 +27,10 @@ public class RecipeListRepository {
         return recipeListClient.getRecipe();
     }
 
+    public LiveData<Boolean> isNetworkTimeout(){
+        return recipeListClient.isNetworkTimeout();
+    }
+
     public void searchRecipe(String type){
         System.out.println("GET RECIPE 3");
         recipeListClient.searchRecipe(type);

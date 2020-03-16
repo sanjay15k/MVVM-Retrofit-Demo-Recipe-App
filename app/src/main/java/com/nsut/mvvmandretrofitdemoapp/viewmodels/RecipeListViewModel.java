@@ -20,6 +20,10 @@ public class RecipeListViewModel extends ViewModel {
         return recipeListRepository.getRecipe();
     }
 
+    public LiveData<Boolean> isNetworkTimeout(){
+        return recipeListRepository.isNetworkTimeout();
+    }
+
     public void searchRecipe(String type){
         System.out.println("GET RECIPE 2");
         recipeListRepository.searchRecipe(type);

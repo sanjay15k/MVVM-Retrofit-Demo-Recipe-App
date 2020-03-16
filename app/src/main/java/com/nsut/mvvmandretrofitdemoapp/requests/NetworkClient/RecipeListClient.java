@@ -21,6 +21,7 @@ public class RecipeListClient {
 
     private static RecipeListClient instance;
     private MutableLiveData<List<Recipe>> recipeList;
+    private MutableLiveData<Boolean> isNetworkTimeout;
     private SearchRecipeRunnable searchRecipeRunnable;
 
     public static RecipeListClient getInstance(){
@@ -32,10 +33,15 @@ public class RecipeListClient {
 
     private RecipeListClient(){
         recipeList = new MutableLiveData<>();
+        isNetworkTimeout = new MutableLiveData<>();
     }
 
     public LiveData<List<Recipe>> getRecipe(){
         return recipeList;
+    }
+
+    public LiveData<Boolean> isNetworkTimeout(){
+        return isNetworkTimeout;
     }
 
     public void searchRecipe(String type){
@@ -51,10 +57,10 @@ public class RecipeListClient {
             if(!handler.isDone()) {
                 System.out.println("**** TIME OUT ****");
                 handler.cancel(true);
+                isNetworkTimeout.postValue(true);
             }
         }, Constants.NETWORK_TIMEOUT, TimeUnit.MILLISECONDS);
     }
-
 
 
     private class SearchRecipeRunnable implements Runnable{
@@ -84,7 +90,9 @@ public class RecipeListClient {
                         }
                     }
                 }
+                System.out.println("Response : "+response);
             } catch (IOException e) {
+
                 e.printStackTrace();
             }
             System.out.println("Request Completed");
