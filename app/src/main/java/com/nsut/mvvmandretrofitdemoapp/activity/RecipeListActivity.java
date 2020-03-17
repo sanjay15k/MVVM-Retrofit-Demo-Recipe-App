@@ -26,12 +26,11 @@ public class RecipeListActivity extends BaseActivity implements CreateApiCall {
     private RecipeListRecyclerViewAdapter mAdapter;
     private RecipeListViewModel recipeListViewModel;
     private LiveData<List<Recipe>> recipeList;
-    private LiveData<Boolean> isNetworkTimeout;
     private String type;
 
     // Views
-    private RecyclerView recipeListRecyclerView;
     private CoordinatorLayout baseLayoutRecipeList;
+    private RecyclerView recipeListRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,26 +49,31 @@ public class RecipeListActivity extends BaseActivity implements CreateApiCall {
         initRecyclerView();
 
         subscribeObserver();
-        reinitializeRecipeList();
         sendApiRequest();
     }
 
-    private void getRecipe(){
-        System.out.println("GET RECIPE 1");
-        recipeListViewModel.searchRecipe(type);
+    private void initRecyclerView(){
+        mAdapter = new RecipeListRecyclerViewAdapter();
+        recipeListRecyclerView.setAdapter(mAdapter);
+        recipeListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void subscribeObserver(){
         recipeList = recipeListViewModel.getRecipeList();
-        isNetworkTimeout = recipeListViewModel.isNetworkTimeout();
-
+        if(recipeList.getValue() != null) {
+            recipeList.getValue().clear();
+        }
+        System.out.println("Recipe List initially : "+recipeList);
         recipeList.observe(this, this::addDataToRecyclerView);
-        isNetworkTimeout.observe(this, this::networkTimeoutOccurred);
+        recipeListViewModel.isNetworkTimeout().observe(this, this::networkTimeoutOccurred);
     }
 
-    private void addDataToRecyclerView(List<Recipe> recipes){
-        mAdapter.setRecipeList(recipes);
-        showProgressBar(false);
+    @Override
+    public void sendApiRequest() {
+        new Handler().postDelayed(() -> recipeListViewModel.searchRecipe(type), 1000);
+        System.out.println("List initially : "+ mAdapter.getRecipeList());
+        showRetryButton(false, null);
+        showProgressBar(true);
     }
 
     private void networkTimeoutOccurred(Boolean isNetworkTimeout){
@@ -80,22 +84,12 @@ public class RecipeListActivity extends BaseActivity implements CreateApiCall {
         }
     }
 
-    @Override
-    public void sendApiRequest() {
-        new Handler().postDelayed(this::getRecipe, 5000);
-        showRetryButton(false, null);
-        showProgressBar(true);
-    }
-
-    private void initRecyclerView(){
-        mAdapter = new RecipeListRecyclerViewAdapter();
-        recipeListRecyclerView.setAdapter(mAdapter);
-        recipeListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    private void reinitializeRecipeList(){
-        if(recipeList !=null && recipeList.getValue() !=null ) {
-            recipeList.getValue().clear();
+    private void addDataToRecyclerView(List<Recipe> recipes){
+        if(recipes !=null && recipes.size()>0) {
+            mAdapter.setRecipeList(recipes);
+            System.out.println("Recipe List Finally : "+recipes.get(0).getTitle());
+            showProgressBar(false);
         }
     }
+
 }

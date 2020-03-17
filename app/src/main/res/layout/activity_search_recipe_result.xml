@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.RecipeListActivity"
-    android:background="#FAFAFA"
+    android:id="@+id/baseLayoutSearchRecipeList"
+    tools:context=".activity.SearchRecipeResultActivity"
+    android:background="#FFFFFF"
     android:paddingTop="5dp"
     android:paddingStart="5dp"
     android:paddingEnd="5dp">

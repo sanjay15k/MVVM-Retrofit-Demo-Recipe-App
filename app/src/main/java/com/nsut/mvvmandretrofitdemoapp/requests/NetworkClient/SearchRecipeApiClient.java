@@ -21,6 +21,7 @@ public class SearchRecipeApiClient {
 
     private static SearchRecipeApiClient mInstance;
     private MutableLiveData<List<SearchRecipe>> mSearchRecipeList;
+    private MutableLiveData<Boolean> isNetworkTimeout;
 
     public static SearchRecipeApiClient getInstance(){
         if(mInstance == null){
@@ -31,10 +32,15 @@ public class SearchRecipeApiClient {
 
     private SearchRecipeApiClient(){
         mSearchRecipeList = new MutableLiveData<>();
+        isNetworkTimeout = new MutableLiveData<>();
     }
 
     public LiveData<List<SearchRecipe>> getSearchRecipeList(){
         return mSearchRecipeList;
+    }
+
+    public LiveData<Boolean> isNetworkTimeout(){
+        return isNetworkTimeout;
     }
 
     public void searchRecipeList(String query){
@@ -76,6 +82,7 @@ public class SearchRecipeApiClient {
         executor.schedule(() -> {
             if(!handler.isDone()){
                 handler.cancel(true);
+                isNetworkTimeout.postValue(true);
             }
         }, Constants.NETWORK_TIMEOUT, TimeUnit.MILLISECONDS);
 

@@ -46,6 +46,7 @@ public class RecipeListClient {
 
     public void searchRecipe(String type){
         System.out.println("GET RECIPE 4");
+        recipeList.postValue(null);
         if(searchRecipeRunnable != null){
             searchRecipeRunnable = null;
         }
@@ -55,7 +56,7 @@ public class RecipeListClient {
         Future handler = poolExecutor.submit(searchRecipeRunnable);
         poolExecutor.schedule(() -> {
             if(!handler.isDone()) {
-                System.out.println("**** TIME OUT ****");
+                System.out.println("**** TIME OUT OCCURRED ***");
                 handler.cancel(true);
                 isNetworkTimeout.postValue(true);
             }
@@ -63,7 +64,7 @@ public class RecipeListClient {
     }
 
 
-    private class SearchRecipeRunnable implements Runnable{
+    private class SearchRecipeRunnable implements Runnable {
 
         private String recipeCount;
         private String type;
@@ -92,7 +93,6 @@ public class RecipeListClient {
                 }
                 System.out.println("Response : "+response);
             } catch (IOException e) {
-
                 e.printStackTrace();
             }
             System.out.println("Request Completed");

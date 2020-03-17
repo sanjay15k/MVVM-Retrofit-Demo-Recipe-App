@@ -20,6 +20,10 @@ public class SearchRecipeListViewModel extends ViewModel {
         return mSearchRecipeListRepository.getSearchRecipeList();
     }
 
+    public LiveData<Boolean> isNetworkTimeout(){
+        return mSearchRecipeListRepository.isNetworkTimeout();
+    }
+
     public void searchRecipeList(String query){
         mSearchRecipeListRepository.searchRecipeList(query);
     }

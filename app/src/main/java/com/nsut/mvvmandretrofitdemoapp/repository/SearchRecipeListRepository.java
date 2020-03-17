@@ -27,6 +27,10 @@ public class SearchRecipeListRepository {
         return searchRecipeApiClient.getSearchRecipeList();
     }
 
+    public LiveData<Boolean> isNetworkTimeout(){
+        return searchRecipeApiClient.isNetworkTimeout();
+    }
+
     public void searchRecipeList(String query){
         searchRecipeApiClient.searchRecipeList(query);
     }

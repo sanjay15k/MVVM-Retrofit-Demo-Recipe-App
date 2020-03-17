@@ -104,4 +104,8 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         notifyDataSetChanged();
     }
 
+    public List<Recipe> getRecipeList(){
+        return recipeList;
+    }
+
 }
