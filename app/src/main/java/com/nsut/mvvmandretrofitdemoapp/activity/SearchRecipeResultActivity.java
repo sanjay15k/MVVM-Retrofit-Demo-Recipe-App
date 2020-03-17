@@ -48,9 +48,9 @@ public class SearchRecipeResultActivity extends BaseActivity implements CreateAp
                 .getInstance(getApplication())
                 .create(SearchRecipeListViewModel.class);
 
-        subscribeObserver();
         initRecyclerView();
-//        reinitializeSearchRecipeResultList();
+
+        subscribeObserver();
         sendApiRequest();
 
 //        new AsyncTaskTest().execute();
@@ -65,18 +65,20 @@ public class SearchRecipeResultActivity extends BaseActivity implements CreateAp
 
     private void subscribeObserver() {
         mSearchRecipeList = searchRecipeListViewModel.getSearchRecipeList();
-        mSearchRecipeList.observe(this, searchRecipes -> {
-            System.out.println("Result from Activity- Search Recipe : "+searchRecipes);
-            showProgressBar(false);
-            recipeListRecyclerViewAdapter.setSearchRecipeResultList(searchRecipes);
-        });
+        if(mSearchRecipeList.getValue() != null) {
+            mSearchRecipeList.getValue().clear();
+        }
+        System.out.println("SearchRecipe List initially : "+mSearchRecipeList.getValue());
 
-        searchRecipeListViewModel.isNetworkTimeout().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                networkTimeoutOccurred(aBoolean);
-            }
-        });
+        mSearchRecipeList.observe(this, this::addDataToRecyclerView);
+        searchRecipeListViewModel.isNetworkTimeout().observe(this, this::networkTimeoutOccurred);
+    }
+
+    @Override
+    public void sendApiRequest() {
+        new Handler().postDelayed(()->{searchRecipeListViewModel.searchRecipeList(query);}, 5000);
+        showRetryButton(false, null);
+        showProgressBar(true);
     }
 
     private void networkTimeoutOccurred(Boolean isNetworkTimeout){
@@ -87,16 +89,11 @@ public class SearchRecipeResultActivity extends BaseActivity implements CreateAp
         }
     }
 
-    @Override
-    public void sendApiRequest() {
-        new Handler().postDelayed(()->{searchRecipeListViewModel.searchRecipeList(query);}, 5000);
-        showRetryButton(false, null);
-        showProgressBar(true);
-    }
-
-    private void reinitializeSearchRecipeResultList(){
-        if(mSearchRecipeList !=null && mSearchRecipeList.getValue() !=null ) {
-            mSearchRecipeList.getValue().clear();
+    private void addDataToRecyclerView(List<SearchRecipe> searchRecipes){
+        if(searchRecipes !=null && searchRecipes.size()>0) {
+            recipeListRecyclerViewAdapter.setSearchRecipeResultList(searchRecipes);
+            System.out.println("SearchRecipe List Finally : " + searchRecipes.get(0).getTitle());
+            showProgressBar(false);
         }
     }
 

@@ -67,8 +67,10 @@ public class SearchRecipeApiClient {
                     SearchRecipeResponse searchRecipeResponse = (SearchRecipeResponse) response.body();
                     if(searchRecipeResponse != null) {
                         List<SearchRecipe> recipeListResponse = searchRecipeResponse.getSearchRecipeList();
-                        System.out.println(recipeListResponse);
                         mSearchRecipeList.postValue(recipeListResponse);
+                    }
+                    else{
+                        mSearchRecipeList.setValue(null);
                     }
                 }
                 System.out.println("Response : "+response);
