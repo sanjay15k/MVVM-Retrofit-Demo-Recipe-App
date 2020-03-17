@@ -12,6 +12,7 @@ import com.nsut.mvvmandretrofitdemoapp.adapters.viewholders.RecipeListViewHolder
 import com.nsut.mvvmandretrofitdemoapp.adapters.viewholders.SearchRecipeResultListViewHolder;
 import com.nsut.mvvmandretrofitdemoapp.models.Recipe;
 import com.nsut.mvvmandretrofitdemoapp.models.SearchRecipe;
+import com.nsut.mvvmandretrofitdemoapp.utils.GlideUtils;
 
 import java.util.List;
 
@@ -85,10 +86,7 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
 
     private void initRecipeResultBindViewHolder(RecipeListViewHolder holder, int position){
         Recipe recipe = recipeList.get(position);
-        Glide.with(holder.itemView.getContext())
-                .load(recipe.getImageUrl())
-                .apply(new RequestOptions().centerCrop())
-                .into(holder.recipePhotoImageView);
+        GlideUtils.loadImageFromUrl(holder.itemView.getContext(), holder.recipePhotoImageView, recipe.getImageUrl(), R.drawable.default_recipe_image);
         holder.recipeTitleTextView.setText(recipe.getTitle());
         holder.recipeSummaryTextView.setText(Html.fromHtml(recipe.getShortSummary()));
     }
