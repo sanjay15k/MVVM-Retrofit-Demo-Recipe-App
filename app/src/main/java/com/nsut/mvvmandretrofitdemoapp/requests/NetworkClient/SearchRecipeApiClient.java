@@ -9,7 +9,6 @@ import com.nsut.mvvmandretrofitdemoapp.utils.Constants;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -24,31 +23,28 @@ public class SearchRecipeApiClient {
     private MutableLiveData<List<SearchRecipe>> mSearchRecipeList;
     private MutableLiveData<Boolean> isNetworkTimeout;
     private SearchRecipeListRunnable searchRecipeListRunnable;
+    private MutableLiveData<Boolean> mIsPerformingQuery;
 
 
     public static SearchRecipeApiClient getInstance(){
-        System.out.println("mSearchRecipeList : "+mInstance);
         if(mInstance == null){
             mInstance = new SearchRecipeApiClient();
         }
         return mInstance;
     }
 
-    public void initSearchRecipeApiClient(){
-        System.out.println("mSearchRecipeList 2 : "+mInstance.mSearchRecipeList.getValue());
-        mInstance.mSearchRecipeList.setValue(null);
-        mInstance.isNetworkTimeout.setValue(false);
-        System.out.println("mSearchRecipeList 3 : "+mInstance.mSearchRecipeList.getValue());
-    }
-
-    public List<SearchRecipe> getmSearchRecipeList() {
-        return mSearchRecipeList.getValue();
-    }
-
     private SearchRecipeApiClient(){
         mSearchRecipeList = new MutableLiveData<>();
         isNetworkTimeout = new MutableLiveData<>();
+        mIsPerformingQuery = new MutableLiveData<>();
     }
+
+    public void initSearchRecipeApiClient(){
+        mInstance.mSearchRecipeList.setValue(null);
+        mInstance.isNetworkTimeout.setValue(false);
+        mInstance.mIsPerformingQuery.setValue(false);
+    }
+
 
     // cancels the request
     public void cancelRequest(boolean isCancel){
@@ -63,7 +59,12 @@ public class SearchRecipeApiClient {
         return isNetworkTimeout;
     }
 
+    public LiveData<Boolean> getmIsPerformingQuery() {
+        return mIsPerformingQuery;
+    }
+
     public void searchRecipeList(String query){
+        mIsPerformingQuery.setValue(true);
         ScheduledThreadPoolExecutor executor = AppExecutors.getInstance().getExecutor();
         searchRecipeListRunnable = new SearchRecipeListRunnable(query);
         Future requestHandler = executor.submit(searchRecipeListRunnable);
@@ -88,13 +89,20 @@ public class SearchRecipeApiClient {
                 if(isCancel){
                     System.out.println("Cancelling request");
                     recipeListCall.cancel();
+                    mIsPerformingQuery.postValue(false);
                     return;
                 }
                 if(response.code() == 200){
                     SearchRecipeResponse searchRecipeResponse = (SearchRecipeResponse) response.body();
                     if(searchRecipeResponse != null) {
                         List<SearchRecipe> recipeListResponse = searchRecipeResponse.getSearchRecipeList();
-                        mSearchRecipeList.postValue(recipeListResponse);
+                        mIsPerformingQuery.postValue(false);
+                        if(isCancel){
+                            mSearchRecipeList.setValue(null);
+                        }
+                        else{
+                            mSearchRecipeList.postValue(recipeListResponse);
+                        }
                     }
                     else{
                         mSearchRecipeList.setValue(null);
@@ -107,7 +115,7 @@ public class SearchRecipeApiClient {
             }
         }
 
-        public void cancelRequest(boolean isCancel){
+        void cancelRequest(boolean isCancel){
             this.isCancel = isCancel;
         }
 

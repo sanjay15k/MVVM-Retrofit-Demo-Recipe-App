@@ -13,15 +13,14 @@ import com.nsut.mvvmandretrofitdemoapp.R;
 
 import androidx.appcompat.widget.SearchView;
 
+
 public class HomeScreen extends BaseActivity {
 
     private SearchView searchView;
 
     @Override
     public void onBackPressed() {
-        System.out.println("Called 1");
         String query = searchView.getQuery().toString().trim();
-
         if(searchView.hasFocus() || query.length()>0){
             defaultSearchView();
         }
@@ -34,6 +33,7 @@ public class HomeScreen extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         hideStatusBar();
+        setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_home_screen);
 
         searchView = findViewById(R.id.searchView);
@@ -81,7 +81,6 @@ public class HomeScreen extends BaseActivity {
     }
 
     private void customizeSearchView(SearchView searchView) {
-
         SearchView.SearchAutoComplete searchAutoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         searchAutoComplete.setHintTextColor(Color.GRAY);
         searchAutoComplete.setTextColor(getResources().getColor(R.color.colorPrimaryDark));

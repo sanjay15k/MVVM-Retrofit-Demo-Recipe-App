@@ -63,7 +63,6 @@ public class RecipeListClient {
     }
 
     public void searchRecipe(String type){
-        System.out.println("GET RECIPE 4");
         recipeList.postValue(null);
         if(searchRecipeRunnable != null){
             searchRecipeRunnable = null;

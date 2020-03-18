@@ -18,14 +18,12 @@ public class SearchRecipeListRepository {
     private MutableLiveData<Boolean> isQueryExhausted;
 
     public static SearchRecipeListRepository getInstance(){
-        System.out.println("mInstanceView Model : "+mInstance);
         if(mInstance == null){
             mInstance = new SearchRecipeListRepository();
         }
         else {
             mInstance.isQueryExhausted.setValue(false);
             mInstance.searchRecipeApiClient.initSearchRecipeApiClient();
-            System.out.println("mSearchRecipeList 1 : "+mInstance.searchRecipeApiClient.getmSearchRecipeList());
         }
         return mInstance;
     }
@@ -41,7 +39,6 @@ public class SearchRecipeListRepository {
         LiveData<List<SearchRecipe>> searchRecipeLiveData = searchRecipeApiClient.getSearchRecipeList();
         mediatorLiveData.addSource(searchRecipeLiveData, searchRecipes -> {
             if(searchRecipes != null){
-//                System.out.println("Mediator data : "+searchRecipes);
                 if(mediatorLiveData.getValue() != null) {
                     List<SearchRecipe> mSearchRecipeList = new ArrayList<>(mediatorLiveData.getValue());
                     mSearchRecipeList.addAll(searchRecipes);
@@ -85,12 +82,11 @@ public class SearchRecipeListRepository {
     }
 
     public void cancelRequest(boolean isCancel){
-        System.out.println("backpressed 3");
         searchRecipeApiClient.cancelRequest(isCancel);
     }
 
-    public List<SearchRecipe> getmSearchRecipeList() {
-        return searchRecipeApiClient.getmSearchRecipeList();
+    public LiveData<Boolean> getmIsPerformingQuery() {
+        return searchRecipeApiClient.getmIsPerformingQuery();
     }
 
 }

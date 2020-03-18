@@ -14,6 +14,9 @@ public class SearchRecipeInstructionRepository {
         if(mInstance == null){
             mInstance = new SearchRecipeInstructionRepository();
         }
+        else{
+            mInstance.searchRecipeInstructionClient.initSearchRecipeInstructionApiClient();
+        }
         return mInstance;
     }
 
@@ -35,6 +38,10 @@ public class SearchRecipeInstructionRepository {
 
     public void cancelRequest(boolean isCancel){
         searchRecipeInstructionClient.cancelRequest(isCancel);
+    }
+
+    public LiveData<Boolean> getmIsPerformingQuery() {
+        return searchRecipeInstructionClient.getmIsPerformingQuery();
     }
 
 }

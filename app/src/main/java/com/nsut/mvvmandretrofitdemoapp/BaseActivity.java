@@ -9,8 +9,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
@@ -44,7 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void loadProgressGifImageView(){
-        Glide.with(this).asGif().load(R.drawable.loader).into(progressBarImageView);
+        Glide.with(this).asGif().load(R.drawable.loader_gif).into(progressBarImageView);
     }
 
     public void showRetryButton(boolean isVisible, CreateApiCall retrySendingRequest){

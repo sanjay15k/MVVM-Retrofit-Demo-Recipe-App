@@ -11,8 +11,10 @@ import androidx.lifecycle.ViewModel;
 public class SearchRecipeListViewModel extends ViewModel {
 
     private static SearchRecipeListRepository mSearchRecipeListRepository;
+    private boolean mIsPerformingQuery;
 
     public SearchRecipeListViewModel(){
+        mIsPerformingQuery = false;
         mSearchRecipeListRepository = SearchRecipeListRepository.getInstance();
     }
 
@@ -29,17 +31,19 @@ public class SearchRecipeListViewModel extends ViewModel {
     }
 
     public void searchRecipeList(String query){
+        mIsPerformingQuery = true;
         mSearchRecipeListRepository.searchRecipeList(query);
     }
 
+    public boolean ismIsPerformingQuery() {
+        if(mSearchRecipeListRepository.getmIsPerformingQuery().getValue() != null) {
+            mIsPerformingQuery = mSearchRecipeListRepository.getmIsPerformingQuery().getValue();
+        }
+        return mIsPerformingQuery;
+    }
+
     public void onBackPressed(boolean isBackPressed){
-        System.out.println("backpressed 2");
         mSearchRecipeListRepository.cancelRequest(isBackPressed);
     }
-
-    public List<SearchRecipe> getmSearchRecipeList() {
-        return mSearchRecipeListRepository.getmSearchRecipeList();
-    }
-
 
 }

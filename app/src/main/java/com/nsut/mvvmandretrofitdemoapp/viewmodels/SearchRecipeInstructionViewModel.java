@@ -9,8 +9,10 @@ import androidx.lifecycle.ViewModel;
 public class SearchRecipeInstructionViewModel extends ViewModel {
 
     private SearchRecipeInstructionRepository mRepository;
+    private boolean mIsPerformingQuery;
 
     public SearchRecipeInstructionViewModel(){
+        mIsPerformingQuery = false;
         mRepository = SearchRecipeInstructionRepository.getInstance();
     }
 
@@ -24,6 +26,13 @@ public class SearchRecipeInstructionViewModel extends ViewModel {
 
     public LiveData<Boolean> isNetworkTimeout() {
         return mRepository.isNetworkTimeout();
+    }
+
+    public boolean ismIsPerformingQuery() {
+        if(mRepository.getmIsPerformingQuery().getValue() != null) {
+            mIsPerformingQuery = mRepository.getmIsPerformingQuery().getValue();
+        }
+        return mIsPerformingQuery;
     }
 
     public void onBackPressed(boolean isBackPressed){

@@ -25,7 +25,6 @@ public class RecipeListViewModel extends ViewModel {
     }
 
     public void searchRecipe(String type){
-        System.out.println("GET RECIPE 2");
         recipeListRepository.searchRecipe(type);
     }
 

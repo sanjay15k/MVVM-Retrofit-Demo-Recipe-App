@@ -7,8 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.nsut.mvvmandretrofitdemoapp.R;
 import com.nsut.mvvmandretrofitdemoapp.activity.RecipeInstructionActivity;
 import com.nsut.mvvmandretrofitdemoapp.activity.SearchRecipeInstructionActivity;
@@ -76,21 +74,13 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
 
     private void initSearchRecipeResultBindViewHolder(SearchRecipeResultListViewHolder holder, int position){
         SearchRecipe searchRecipe = searchRecipeResultList.get(position);
-        Glide.with(holder.itemView.getContext())
-                .load(searchRecipe.getImageUrl())
-                .apply(new RequestOptions().centerCrop())
-                .into(holder.searchRecipePhotoImageView);
+        GlideUtils.loadImageFromUrl(context, holder.searchRecipePhotoImageView, searchRecipe.getImageUrl(), R.drawable.default_recipe_image);
         holder.searchRecipeTitleTextView.setText(searchRecipe.getTitle());
-        holder.showInstructionsImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println("CLICKED*****");
-                // Open detailed instruction activity and also make request
-                long recipeID = searchRecipe.getId();
-                Intent intent = new Intent(context, SearchRecipeInstructionActivity.class);
-                intent.putExtra("recipeID", recipeID);
-                context.startActivity(intent);
-            }
+        holder.showInstructionsImageButton.setOnClickListener(v -> {
+            long recipeID = searchRecipe.getId();
+            Intent intent = new Intent(context, SearchRecipeInstructionActivity.class);
+            intent.putExtra("recipeID", recipeID);
+            context.startActivity(intent);
         });
     }
 
@@ -99,14 +89,10 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         GlideUtils.loadImageFromUrl(context, holder.recipePhotoImageView, recipe.getImageUrl(), R.drawable.default_recipe_image);
         holder.recipeTitleTextView.setText(recipe.getTitle());
         holder.recipeSummaryTextView.setText(Html.fromHtml(recipe.getShortSummary()));
-        holder.recipeCardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println("Recipe clicked : "+recipe.getTitle());
-                Intent intent = new Intent(context, RecipeInstructionActivity.class);
-                intent.putExtra("recipe", recipe);
-                context.startActivity(intent);
-            }
+        holder.recipeCardView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, RecipeInstructionActivity.class);
+            intent.putExtra("recipe", recipe);
+            context.startActivity(intent);
         });
     }
 

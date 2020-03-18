@@ -7,7 +7,6 @@ import com.nsut.mvvmandretrofitdemoapp.utils.Constants;
 
 import java.io.IOException;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -21,16 +20,12 @@ public class SearchRecipeInstructionClient {
     private static SearchRecipeInstructionClient mInstance;
     private MutableLiveData<SearchRecipeInstruction> searchRecipeInstruction;
     private MutableLiveData<Boolean> isNetworkTimeout;
-    private Future requestHandler;
-    private ScheduledFuture networkTimeoutHandler;
+    private MutableLiveData<Boolean> mIsPerformingQuery;
+    private SearchRecipeInstructionRunnable searchRecipeInstructionRunnable;
 
     public static SearchRecipeInstructionClient getInstance(){
         if(mInstance == null){
             mInstance = new SearchRecipeInstructionClient();
-        }
-        else{
-            mInstance.searchRecipeInstruction.setValue(null);
-            mInstance.isNetworkTimeout.setValue(false);
         }
         return mInstance;
     }
@@ -38,17 +33,17 @@ public class SearchRecipeInstructionClient {
     private SearchRecipeInstructionClient(){
         searchRecipeInstruction = new MutableLiveData<>();
         isNetworkTimeout = new MutableLiveData<>();
+        mIsPerformingQuery = new MutableLiveData<>();
+    }
+
+    public void initSearchRecipeInstructionApiClient(){
+        mInstance.searchRecipeInstruction.setValue(null);
+        mInstance.isNetworkTimeout.setValue(false);
+        mInstance.mIsPerformingQuery.setValue(false);
     }
 
     public void cancelRequest(boolean isCancel){
-        if(isCancel && requestHandler != null && !requestHandler.isDone()){
-            if(requestHandler != null) {
-                requestHandler.cancel(true);
-            }
-            if(networkTimeoutHandler != null) {
-                networkTimeoutHandler.cancel(true);
-            }
-        }
+        getCancelThread(isCancel).start();
     }
 
     public LiveData<SearchRecipeInstruction> getSearchRecipeInstruction() {
@@ -59,15 +54,23 @@ public class SearchRecipeInstructionClient {
         return isNetworkTimeout;
     }
 
+
+    public LiveData<Boolean> getmIsPerformingQuery() {
+        return mIsPerformingQuery;
+    }
+
     public void getSearchRecipeInstruction(long recipeID){
         ScheduledThreadPoolExecutor poolExecutor = AppExecutors.getInstance().getExecutor();
-        requestHandler = poolExecutor.submit(new SearchRecipeInstructionRunnable(recipeID));
-        scheduleTimeout(poolExecutor);
+        searchRecipeInstructionRunnable = new SearchRecipeInstructionRunnable(recipeID);
+        Future requestHandler = poolExecutor.submit(searchRecipeInstructionRunnable);
+        scheduleTimeout(poolExecutor, requestHandler);
     }
 
     class SearchRecipeInstructionRunnable implements Runnable{
 
         private long recipeID;
+        private Call recipeListCall;
+        private boolean isCancel;
 
         SearchRecipeInstructionRunnable(long recipeID){
             this.recipeID = recipeID;
@@ -75,21 +78,31 @@ public class SearchRecipeInstructionClient {
 
         @Override
         public void run() {
-            Call recipeListCall = ServiceGenerator.getRecipeApi().getSearchRecipeInstruction(recipeID);
+            recipeListCall = ServiceGenerator.getRecipeApi().getSearchRecipeInstruction(recipeID);
             try {
                 Response response = recipeListCall.execute();
-                System.out.println("Response : "+response);
+                if(isCancel){
+                    System.out.println("Cancelling request");
+                    recipeListCall.cancel();
+                    mIsPerformingQuery.postValue(false);
+                    return;
+                }
                 if(response.code() == 200){
-                    System.out.println("Inside response code");
-                    System.out.println("Response body : "+response.body().toString());
                     SearchRecipeInstruction recipeInstruction = (SearchRecipeInstruction) response.body();
                     if(searchRecipeInstruction != null) {
-                        searchRecipeInstruction.postValue(recipeInstruction);
+                        mIsPerformingQuery.postValue(false);
+                        if(isCancel){
+                            searchRecipeInstruction.setValue(null);
+                        }
+                        else{
+                            searchRecipeInstruction.postValue(recipeInstruction);
+                        }
                     }
                     else{
                         searchRecipeInstruction.setValue(null);
                     }
                 }
+                System.out.println("Response : "+response);
                 System.out.println("Data fetched : "+searchRecipeInstruction);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -97,15 +110,26 @@ public class SearchRecipeInstructionClient {
             System.out.println("Request Completed");
         }
 
+        void cancelRequest(boolean isCancel){
+            this.isCancel = isCancel;
+        }
+
     }
 
-    private void scheduleTimeout(ScheduledThreadPoolExecutor executor){
-        networkTimeoutHandler = executor.schedule(() -> {
+    private void scheduleTimeout(ScheduledThreadPoolExecutor executor, Future requestHandler){
+        executor.schedule(() -> {
             if(!requestHandler.isDone()) {
                 cancelRequest(true);
                 isNetworkTimeout.postValue(true);
             }
         }, Constants.NETWORK_TIMEOUT, TimeUnit.MILLISECONDS);
+    }
+
+    private Thread getCancelThread(boolean isCancel){
+        return new Thread(() -> {
+            while (searchRecipeInstructionRunnable == null);
+            searchRecipeInstructionRunnable.cancelRequest(isCancel);
+        });
     }
 
 }

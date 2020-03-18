@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.os.Handler;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -34,7 +33,6 @@ public class SearchRecipeResultActivity extends BaseActivity implements CreateAp
 
     @Override
     public void onBackPressed() {
-        System.out.println("backpressed 1");
         searchRecipeListViewModel.onBackPressed(true);
         super.onBackPressed();
     }
@@ -59,8 +57,6 @@ public class SearchRecipeResultActivity extends BaseActivity implements CreateAp
         subscribeObserver();
         sendApiRequest();
 
-        System.out.println("Val : "+searchRecipeListViewModel.getmSearchRecipeList());
-
     }
 
     private void initRecyclerView(){
@@ -81,7 +77,7 @@ public class SearchRecipeResultActivity extends BaseActivity implements CreateAp
 
     @Override
     public void sendApiRequest() {
-        new Handler().postDelayed(()->{searchRecipeListViewModel.searchRecipeList(query);}, 5000);
+        searchRecipeListViewModel.searchRecipeList(query);
         showRetryButton(false, null);
         showProgressBar(true);
     }
@@ -102,10 +98,12 @@ public class SearchRecipeResultActivity extends BaseActivity implements CreateAp
     }
 
     private void addDataToRecyclerView(List<SearchRecipe> searchRecipes){
+        System.out.println("Recipe to add to recycler view : "+searchRecipes);
         if(searchRecipes !=null && searchRecipes.size()>0) {
-            System.out.println(searchRecipes);
-            recipeListRecyclerViewAdapter.setSearchRecipeResultList(searchRecipes);
-            showProgressBar(false);
+            if(!searchRecipeListViewModel.ismIsPerformingQuery()) {
+                recipeListRecyclerViewAdapter.setSearchRecipeResultList(searchRecipes);
+                showProgressBar(false);
+            }
         }
     }
 

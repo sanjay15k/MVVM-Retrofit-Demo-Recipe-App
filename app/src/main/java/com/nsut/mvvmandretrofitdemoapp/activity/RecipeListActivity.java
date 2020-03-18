@@ -93,7 +93,7 @@ public class RecipeListActivity extends BaseActivity implements CreateApiCall {
     private void addDataToRecyclerView(List<Recipe> recipes){
         if(recipes !=null && recipes.size()>0) {
             mAdapter.setRecipeList(recipes);
-            System.out.println("Recipe List Finally : "+recipes.get(0).getTitle());
+            System.out.println("Recipe List Finally : "+recipes);
             showProgressBar(false);
         }
     }

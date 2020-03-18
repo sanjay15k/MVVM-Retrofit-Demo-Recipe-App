@@ -9,6 +9,10 @@
         <item name="android:fontFamily">@font/lato_regular</item>
     </style>
 
+    <style name="AppTheme.Launcher">
+        <item name="android:windowBackground">@drawable/launcher_drawable</item>
+    </style>
+
     <style name="SearchViewStyle" parent="AppTheme">
         <item name="android:editTextColor">@color/searchViewTextColor</item>
         <item name="android:hint">@color/searchViewTextColor</item>

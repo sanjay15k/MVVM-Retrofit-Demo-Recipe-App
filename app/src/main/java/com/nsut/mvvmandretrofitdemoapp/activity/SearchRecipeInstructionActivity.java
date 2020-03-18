@@ -93,15 +93,17 @@ public class SearchRecipeInstructionActivity extends BaseActivity implements Cre
 
     private void setRecipeData(SearchRecipeInstruction searchRecipeInstruction){
         if(searchRecipeInstruction != null) {
-            showProgressBar(false);
-            recipeInstructionLinearLayout.setVisibility(View.VISIBLE);
-            GlideUtils.loadImageFromUrl(this, recipePhotoImageView, searchRecipeInstruction.getImageUrl(), R.drawable.default_recipe_image);
-            recipeTitleTextView.setText(searchRecipeInstruction.getTitle());
-            recipeInstructionTextView.setText(Html.fromHtml(searchRecipeInstruction.getInstruction()));
-            healthScoreTextView.setText(String.valueOf(searchRecipeInstruction.getHealthScore()));
-            cookingTimeTextView.setText(String.valueOf(searchRecipeInstruction.getCookingTime()));
-            servingCountTextView.setText(String.valueOf(searchRecipeInstruction.getServingCount()));
-            openRecipeUrlButton.setOnClickListener(v -> openUrlInBrowser(searchRecipeInstruction.getSourceUrl()));
+            if(!mViewModel.ismIsPerformingQuery()) {
+                showProgressBar(false);
+                recipeInstructionLinearLayout.setVisibility(View.VISIBLE);
+                GlideUtils.loadImageFromUrl(this, recipePhotoImageView, searchRecipeInstruction.getImageUrl(), R.drawable.default_recipe_image);
+                recipeTitleTextView.setText(searchRecipeInstruction.getTitle());
+                recipeInstructionTextView.setText(Html.fromHtml(searchRecipeInstruction.getInstruction()));
+                healthScoreTextView.setText(String.valueOf(searchRecipeInstruction.getHealthScore()));
+                cookingTimeTextView.setText(String.valueOf(searchRecipeInstruction.getCookingTime()));
+                servingCountTextView.setText(String.valueOf(searchRecipeInstruction.getServingCount()));
+                openRecipeUrlButton.setOnClickListener(v -> openUrlInBrowser(searchRecipeInstruction.getSourceUrl()));
+            }
         }
     }
 

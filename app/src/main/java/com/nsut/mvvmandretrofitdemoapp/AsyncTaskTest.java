@@ -18,7 +18,6 @@ public class AsyncTaskTest extends AsyncTask<Void, Void, Void> {
         try {
             Response response = recipeListCall.execute();
             if(response.code() == 200){
-                System.out.println("Response body : "+response.body().toString());
                 SearchRecipeInstruction searchRecipeInstruction = (SearchRecipeInstruction) response.body();
                 if(searchRecipeInstruction != null) {
                     System.out.println(searchRecipeInstruction);
