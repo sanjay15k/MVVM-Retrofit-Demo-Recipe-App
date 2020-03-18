@@ -9,6 +9,7 @@ import com.nsut.mvvmandretrofitdemoapp.utils.Constants;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -22,17 +23,36 @@ public class SearchRecipeApiClient {
     private static SearchRecipeApiClient mInstance;
     private MutableLiveData<List<SearchRecipe>> mSearchRecipeList;
     private MutableLiveData<Boolean> isNetworkTimeout;
+    private SearchRecipeListRunnable searchRecipeListRunnable;
+
 
     public static SearchRecipeApiClient getInstance(){
+        System.out.println("mSearchRecipeList : "+mInstance);
         if(mInstance == null){
             mInstance = new SearchRecipeApiClient();
         }
         return mInstance;
     }
 
+    public void initSearchRecipeApiClient(){
+        System.out.println("mSearchRecipeList 2 : "+mInstance.mSearchRecipeList.getValue());
+        mInstance.mSearchRecipeList.setValue(null);
+        mInstance.isNetworkTimeout.setValue(false);
+        System.out.println("mSearchRecipeList 3 : "+mInstance.mSearchRecipeList.getValue());
+    }
+
+    public List<SearchRecipe> getmSearchRecipeList() {
+        return mSearchRecipeList.getValue();
+    }
+
     private SearchRecipeApiClient(){
         mSearchRecipeList = new MutableLiveData<>();
         isNetworkTimeout = new MutableLiveData<>();
+    }
+
+    // cancels the request
+    public void cancelRequest(boolean isCancel){
+        getCancelThread(isCancel).start();
     }
 
     public LiveData<List<SearchRecipe>> getSearchRecipeList(){
@@ -45,13 +65,16 @@ public class SearchRecipeApiClient {
 
     public void searchRecipeList(String query){
         ScheduledThreadPoolExecutor executor = AppExecutors.getInstance().getExecutor();
-        Future handler = executor.submit(new SearchRecipeListRunnable(query));
-        scheduleTimeout(executor, handler);
+        searchRecipeListRunnable = new SearchRecipeListRunnable(query);
+        Future requestHandler = executor.submit(searchRecipeListRunnable);
+        scheduleTimeout(executor, requestHandler);
     }
 
     class SearchRecipeListRunnable implements Runnable{
 
         private String query;
+        private Call recipeListCall;
+        private boolean isCancel;
 
         SearchRecipeListRunnable(String query){
             this.query = query;
@@ -59,10 +82,14 @@ public class SearchRecipeApiClient {
 
         @Override
         public void run() {
-            Call recipeListCall = ServiceGenerator.getRecipeApi().getSearchRecipeList("5", query);
+            recipeListCall = ServiceGenerator.getRecipeApi().getSearchRecipeList(Constants.SEARCH_RECIPE_COUNT, query);
             try {
                 Response response = recipeListCall.execute();
-                System.out.println("DONE 3");
+                if(isCancel){
+                    System.out.println("Cancelling request");
+                    recipeListCall.cancel();
+                    return;
+                }
                 if(response.code() == 200){
                     SearchRecipeResponse searchRecipeResponse = (SearchRecipeResponse) response.body();
                     if(searchRecipeResponse != null) {
@@ -76,18 +103,32 @@ public class SearchRecipeApiClient {
                 System.out.println("Response : "+response);
             } catch (IOException e) {
                 e.printStackTrace();
+                mSearchRecipeList.setValue(null);
             }
         }
+
+        public void cancelRequest(boolean isCancel){
+            this.isCancel = isCancel;
+        }
+
     }
 
-    private void scheduleTimeout(ScheduledThreadPoolExecutor executor, Future handler){
-        executor.schedule(() -> {
-            if(!handler.isDone()){
-                handler.cancel(true);
+    private void scheduleTimeout(ScheduledThreadPoolExecutor executor, Future requestHandler){
+         executor.schedule(() -> {
+             if(requestHandler.isCancelled())
+                 return;
+             if(!requestHandler.isDone()) {
+                cancelRequest(true);
                 isNetworkTimeout.postValue(true);
             }
         }, Constants.NETWORK_TIMEOUT, TimeUnit.MILLISECONDS);
+    }
 
+    private Thread getCancelThread(boolean isCancel){
+        return new Thread(() -> {
+            while (searchRecipeListRunnable == null);
+            searchRecipeListRunnable.cancelRequest(isCancel);
+        });
     }
 
 }

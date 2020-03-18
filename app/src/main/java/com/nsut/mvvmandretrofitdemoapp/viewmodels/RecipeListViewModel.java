@@ -29,4 +29,8 @@ public class RecipeListViewModel extends ViewModel {
         recipeListRepository.searchRecipe(type);
     }
 
+    public void onBackPressed(boolean isBackPressed){
+        recipeListRepository.cancelRequest(isBackPressed);
+    }
+
 }

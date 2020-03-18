@@ -36,4 +36,8 @@ public class RecipeListRepository {
         recipeListClient.searchRecipe(type);
     }
 
+    public void cancelRequest(boolean isCancel){
+        recipeListClient.cancelRequest(isCancel);
+    }
+
 }

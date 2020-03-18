@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.nsut.mvvmandretrofitdemoapp.models.SearchRecipe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SearchRecipeResponse {
@@ -30,4 +29,11 @@ public class SearchRecipeResponse {
         return searchRecipeList;
     }
 
+    @Override
+    public String toString() {
+        return "SearchRecipeResponse{" +
+                "searchRecipeList=" + searchRecipeList +
+                ", imageBaseUrl='" + imageBaseUrl + '\'' +
+                '}';
+    }
 }

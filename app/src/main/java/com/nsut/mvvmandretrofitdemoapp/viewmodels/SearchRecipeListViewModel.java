@@ -24,8 +24,22 @@ public class SearchRecipeListViewModel extends ViewModel {
         return mSearchRecipeListRepository.isNetworkTimeout();
     }
 
+    public LiveData<Boolean> isQueryExhausted(){
+        return mSearchRecipeListRepository.isQueryExhausted();
+    }
+
     public void searchRecipeList(String query){
         mSearchRecipeListRepository.searchRecipeList(query);
     }
+
+    public void onBackPressed(boolean isBackPressed){
+        System.out.println("backpressed 2");
+        mSearchRecipeListRepository.cancelRequest(isBackPressed);
+    }
+
+    public List<SearchRecipe> getmSearchRecipeList() {
+        return mSearchRecipeListRepository.getmSearchRecipeList();
+    }
+
 
 }

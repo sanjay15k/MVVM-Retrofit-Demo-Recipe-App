@@ -33,6 +33,12 @@ public class RecipeListActivity extends BaseActivity implements CreateApiCall {
     private RecyclerView recipeListRecyclerView;
 
     @Override
+    public void onBackPressed() {
+        recipeListViewModel.onBackPressed(true);
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
@@ -70,7 +76,7 @@ public class RecipeListActivity extends BaseActivity implements CreateApiCall {
 
     @Override
     public void sendApiRequest() {
-        new Handler().postDelayed(() -> recipeListViewModel.searchRecipe(type), 1000);
+        new Handler().postDelayed(() -> recipeListViewModel.searchRecipe(type), 0);
         System.out.println("List initially : "+ mAdapter.getRecipeList());
         showRetryButton(false, null);
         showProgressBar(true);

@@ -2,7 +2,6 @@ package com.nsut.mvvmandretrofitdemoapp.activity;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +33,13 @@ public class SearchRecipeResultActivity extends BaseActivity implements CreateAp
     private RecyclerView searchRecipeListRecyclerView;
 
     @Override
+    public void onBackPressed() {
+        System.out.println("backpressed 1");
+        searchRecipeListViewModel.onBackPressed(true);
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_recipe_result);
@@ -53,7 +59,7 @@ public class SearchRecipeResultActivity extends BaseActivity implements CreateAp
         subscribeObserver();
         sendApiRequest();
 
-//        new AsyncTaskTest().execute();
+        System.out.println("Val : "+searchRecipeListViewModel.getmSearchRecipeList());
 
     }
 
@@ -68,10 +74,9 @@ public class SearchRecipeResultActivity extends BaseActivity implements CreateAp
         if(mSearchRecipeList.getValue() != null) {
             mSearchRecipeList.getValue().clear();
         }
-        System.out.println("SearchRecipe List initially : "+mSearchRecipeList.getValue());
-
         mSearchRecipeList.observe(this, this::addDataToRecyclerView);
         searchRecipeListViewModel.isNetworkTimeout().observe(this, this::networkTimeoutOccurred);
+        searchRecipeListViewModel.isQueryExhausted().observe(this, this::queryExhausted);
     }
 
     @Override
@@ -89,10 +94,17 @@ public class SearchRecipeResultActivity extends BaseActivity implements CreateAp
         }
     }
 
+    private void queryExhausted(boolean isQueryExhausted){
+        if(isQueryExhausted){
+            showNoResultsFoundLayout(true);
+            showProgressBar(false);
+        }
+    }
+
     private void addDataToRecyclerView(List<SearchRecipe> searchRecipes){
         if(searchRecipes !=null && searchRecipes.size()>0) {
+            System.out.println(searchRecipes);
             recipeListRecyclerViewAdapter.setSearchRecipeResultList(searchRecipes);
-            System.out.println("SearchRecipe List Finally : " + searchRecipes.get(0).getTitle());
             showProgressBar(false);
         }
     }

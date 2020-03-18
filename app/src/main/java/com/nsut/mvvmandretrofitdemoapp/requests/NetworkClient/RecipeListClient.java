@@ -9,6 +9,7 @@ import com.nsut.mvvmandretrofitdemoapp.utils.Constants;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -19,16 +20,22 @@ import retrofit2.Response;
 
 public class RecipeListClient {
 
-    private static RecipeListClient instance;
+    private static RecipeListClient mInstance;
     private MutableLiveData<List<Recipe>> recipeList;
     private MutableLiveData<Boolean> isNetworkTimeout;
     private SearchRecipeRunnable searchRecipeRunnable;
+    private Future requestHandler;
+    private ScheduledFuture networkTimeoutHandler;
 
     public static RecipeListClient getInstance(){
-        if(instance == null){
-            instance = new RecipeListClient();
+        if(mInstance == null){
+            mInstance = new RecipeListClient();
         }
-        return instance;
+        else{
+            mInstance.recipeList.setValue(null);
+            mInstance.isNetworkTimeout.setValue(false);
+        }
+        return mInstance;
     }
 
     private RecipeListClient(){
@@ -44,6 +51,17 @@ public class RecipeListClient {
         return isNetworkTimeout;
     }
 
+    public void cancelRequest(boolean isCancel){
+        if(isCancel){
+            if(requestHandler != null){
+                requestHandler.cancel(true);
+            }
+            if(networkTimeoutHandler != null){
+                networkTimeoutHandler.cancel(true);
+            }
+        }
+    }
+
     public void searchRecipe(String type){
         System.out.println("GET RECIPE 4");
         recipeList.postValue(null);
@@ -53,16 +71,9 @@ public class RecipeListClient {
         searchRecipeRunnable = new SearchRecipeRunnable(Constants.RECIPE_COUNT, type);
         ScheduledThreadPoolExecutor poolExecutor = AppExecutors.getInstance().getExecutor();
 
-        Future handler = poolExecutor.submit(searchRecipeRunnable);
-        poolExecutor.schedule(() -> {
-            if(!handler.isDone()) {
-                System.out.println("**** TIME OUT OCCURRED ***");
-                handler.cancel(true);
-                isNetworkTimeout.postValue(true);
-            }
-        }, Constants.NETWORK_TIMEOUT, TimeUnit.MILLISECONDS);
+        requestHandler = poolExecutor.submit(searchRecipeRunnable);
+        scheduleTimeout(poolExecutor);
     }
-
 
     private class SearchRecipeRunnable implements Runnable {
 
@@ -97,6 +108,15 @@ public class RecipeListClient {
             }
             System.out.println("Request Completed");
         }
+    }
+
+    private void scheduleTimeout(ScheduledThreadPoolExecutor executor){
+        networkTimeoutHandler = executor.schedule(() -> {
+            if(!requestHandler.isDone()){
+                cancelRequest(true);
+                isNetworkTimeout.postValue(true);
+            }
+        }, Constants.NETWORK_TIMEOUT, TimeUnit.MILLISECONDS);
     }
 
 }

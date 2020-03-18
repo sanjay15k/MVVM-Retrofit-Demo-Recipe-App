@@ -1,5 +1,7 @@
 package com.nsut.mvvmandretrofitdemoapp.adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,8 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.nsut.mvvmandretrofitdemoapp.R;
+import com.nsut.mvvmandretrofitdemoapp.activity.RecipeInstructionActivity;
+import com.nsut.mvvmandretrofitdemoapp.activity.SearchRecipeInstructionActivity;
 import com.nsut.mvvmandretrofitdemoapp.adapters.viewholders.RecipeListViewHolder;
 import com.nsut.mvvmandretrofitdemoapp.adapters.viewholders.SearchRecipeResultListViewHolder;
 import com.nsut.mvvmandretrofitdemoapp.models.Recipe;
@@ -21,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private Context context;
     private int viewTagID;
     private List<Recipe> recipeList;
     private List<SearchRecipe> searchRecipeResultList;
@@ -33,6 +38,7 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        context = parent.getContext();
         View view;
         if(viewTagID == 1){
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_search_recipe_result_list_item, parent, false);
@@ -78,19 +84,31 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         holder.showInstructionsImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Open detailed instruction activity and laso make request
                 System.out.println("CLICKED*****");
+                // Open detailed instruction activity and also make request
+                long recipeID = searchRecipe.getId();
+                Intent intent = new Intent(context, SearchRecipeInstructionActivity.class);
+                intent.putExtra("recipeID", recipeID);
+                context.startActivity(intent);
             }
         });
     }
 
     private void initRecipeResultBindViewHolder(RecipeListViewHolder holder, int position){
         Recipe recipe = recipeList.get(position);
-        GlideUtils.loadImageFromUrl(holder.itemView.getContext(), holder.recipePhotoImageView, recipe.getImageUrl(), R.drawable.default_recipe_image);
+        GlideUtils.loadImageFromUrl(context, holder.recipePhotoImageView, recipe.getImageUrl(), R.drawable.default_recipe_image);
         holder.recipeTitleTextView.setText(recipe.getTitle());
         holder.recipeSummaryTextView.setText(Html.fromHtml(recipe.getShortSummary()));
+        holder.recipeCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Recipe clicked : "+recipe.getTitle());
+                Intent intent = new Intent(context, RecipeInstructionActivity.class);
+                intent.putExtra("recipe", recipe);
+                context.startActivity(intent);
+            }
+        });
     }
-
 
     public void setRecipeList(List<Recipe> recipeList){
         this.recipeList = recipeList;

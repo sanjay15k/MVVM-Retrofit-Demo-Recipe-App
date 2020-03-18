@@ -1,11 +1,8 @@
 package com.nsut.mvvmandretrofitdemoapp.models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.SerializedName;
 
-public class Recipe implements Parcelable {
+public class SearchRecipeInstruction {
 
     @SerializedName("id")
     private long id;
@@ -15,9 +12,6 @@ public class Recipe implements Parcelable {
 
     @SerializedName("image")
     private String imageUrl;
-
-    @SerializedName("summary")
-    private String shortSummary;
 
     @SerializedName("instructions")
     private String instruction;
@@ -34,59 +28,16 @@ public class Recipe implements Parcelable {
     @SerializedName("sourceUrl")
     private String sourceUrl;
 
-    public Recipe(long id, String title, String imageUrl, String shortSummary, String instruction, long healthScore, long cookingTime, long servingCount, String sourceUrl) {
+    public SearchRecipeInstruction(long id, String title, String imageUrl, String instruction, long healthScore, long cookingTime, long servingCount, String sourceUrl) {
         this.id = id;
         this.title = title;
         this.imageUrl = imageUrl;
-        this.shortSummary = shortSummary;
         this.instruction = instruction;
         this.healthScore = healthScore;
         this.cookingTime = cookingTime;
         this.servingCount = servingCount;
         this.sourceUrl = sourceUrl;
     }
-
-    protected Recipe(Parcel in) {
-        id = in.readLong();
-        title = in.readString();
-        imageUrl = in.readString();
-        shortSummary = in.readString();
-        instruction = in.readString();
-        healthScore = in.readLong();
-        cookingTime = in.readLong();
-        servingCount = in.readLong();
-        sourceUrl = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeString(title);
-        dest.writeString(imageUrl);
-        dest.writeString(shortSummary);
-        dest.writeString(instruction);
-        dest.writeLong(healthScore);
-        dest.writeLong(cookingTime);
-        dest.writeLong(servingCount);
-        dest.writeString(sourceUrl);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
-        @Override
-        public Recipe createFromParcel(Parcel in) {
-            return new Recipe(in);
-        }
-
-        @Override
-        public Recipe[] newArray(int size) {
-            return new Recipe[size];
-        }
-    };
 
     public long getId() {
         return id;
@@ -110,14 +61,6 @@ public class Recipe implements Parcelable {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public String getShortSummary() {
-        return shortSummary;
-    }
-
-    public void setShortSummary(String shortSummary) {
-        this.shortSummary = shortSummary;
     }
 
     public String getInstruction() {
@@ -162,11 +105,10 @@ public class Recipe implements Parcelable {
 
     @Override
     public String toString() {
-        return "Recipe{" +
+        return "SearchRecipeInstruction{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
-                ", shortSummary='" + shortSummary + '\'' +
                 ", instruction='" + instruction + '\'' +
                 ", healthScore=" + healthScore +
                 ", cookingTime=" + cookingTime +
@@ -174,5 +116,4 @@ public class Recipe implements Parcelable {
                 ", sourceUrl='" + sourceUrl + '\'' +
                 '}';
     }
-
 }

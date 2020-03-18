@@ -2,12 +2,10 @@ package com.nsut.mvvmandretrofitdemoapp;
 
 import android.os.AsyncTask;
 
-import com.nsut.mvvmandretrofitdemoapp.models.SearchRecipe;
+import com.nsut.mvvmandretrofitdemoapp.models.SearchRecipeInstruction;
 import com.nsut.mvvmandretrofitdemoapp.requests.ServiceGenerator;
-import com.nsut.mvvmandretrofitdemoapp.requests.response.SearchRecipeResponse;
 
 import java.io.IOException;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -16,21 +14,21 @@ public class AsyncTaskTest extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        Call recipeListCall = ServiceGenerator.getRecipeApi().getSearchRecipeList("2", "dosa");
+        Call recipeListCall = ServiceGenerator.getRecipeApi().getSearchRecipeInstruction(488686);
         try {
             Response response = recipeListCall.execute();
-            System.out.println("DONE 3");
             if(response.code() == 200){
-                SearchRecipeResponse searchRecipeResponse = (SearchRecipeResponse) response.body();
-                if(searchRecipeResponse != null) {
-                    List<SearchRecipe> recipeListResponse = searchRecipeResponse.getSearchRecipeList();
-                    System.out.println(recipeListResponse);
+                System.out.println("Response body : "+response.body().toString());
+                SearchRecipeInstruction searchRecipeInstruction = (SearchRecipeInstruction) response.body();
+                if(searchRecipeInstruction != null) {
+                    System.out.println(searchRecipeInstruction);
                 }
             }
             System.out.println("Response : "+response);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("Request Completed");
         return null;
     }
 }

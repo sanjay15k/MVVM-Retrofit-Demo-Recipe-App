@@ -9,7 +9,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.nsut.mvvmandretrofitdemoapp.listener.CreateApiCall;
@@ -18,6 +20,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private Button retryButton;
     private ImageView progressBarImageView;
+    private RelativeLayout noResultsFoundLayout;
 
     @Override
     public void setContentView(int layoutResID) {
@@ -25,10 +28,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         FrameLayout frameLayout = constraintLayout.findViewById(R.id.frameLayout);
         retryButton = constraintLayout.findViewById(R.id.retryButton);
         progressBarImageView = constraintLayout.findViewById(R.id.progressBarImageView);
+        noResultsFoundLayout = constraintLayout.findViewById(R.id.noResultsFoundLayout);
+
         getLayoutInflater().inflate(layoutResID, frameLayout, true);
         super.setContentView(constraintLayout);
 
+        init();
         loadProgressGifImageView();
+    }
+
+    private void init(){
+        retryButton.setVisibility(View.GONE);
+        progressBarImageView.setVisibility(View.GONE);
+        noResultsFoundLayout.setVisibility(View.GONE);
+    }
+
+    private void loadProgressGifImageView(){
+        Glide.with(this).asGif().load(R.drawable.loader).into(progressBarImageView);
     }
 
     public void showRetryButton(boolean isVisible, CreateApiCall retrySendingRequest){
@@ -42,8 +58,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         progressBarImageView.setVisibility(isVisible?View.VISIBLE:View.GONE);
     }
 
-    private void loadProgressGifImageView(){
-        Glide.with(this).asGif().load(R.drawable.loader).into(progressBarImageView);
+    public void showNoResultsFoundLayout(boolean isVisible){
+        noResultsFoundLayout.setVisibility(isVisible?View.VISIBLE:View.GONE);
     }
 
     // Hiding the status bar
