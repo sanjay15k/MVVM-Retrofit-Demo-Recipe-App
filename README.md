@@ -2,7 +2,7 @@
 
 # Food Recipe App - MVVM and Retrofit2
 The project is a primary food recipe searching android app. The app follows the most popular architecture - Model-View-ViewModel.
-For consuming the rest API from <a href="https://spoonacular.com/food-api/">Spoonacular API</a>, I have used retrofit2.
+For consuming the rest API from <a href="https://spoonacular.com/food-api/" target="_blank">Spoonacular API</a>, I have used retrofit2.
 
 <br>
 
